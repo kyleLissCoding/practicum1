@@ -36,5 +36,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ghcr.io/kyleLissCoding/primes-service:latest --file Dockerfile .
-          docker push ghcr.io/kyleLissCoding/primes-service:latest
+          docker build -t ghcr.io/kylelisscoding/primes-service:latest --file Dockerfile .
+          docker push ghcr.io/kylelisscoding/primes-service:latest
