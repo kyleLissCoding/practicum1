@@ -30,14 +30,8 @@ jobs:
           reporter: java-junit
           fail-on-error: true
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.ACCESS_TOKEN }}
-
       - name: Build and push the image
         run: |
-          docker build -t ghcr.io/kylecoding/primes-service:latest --file Dockerfile .
+          docker login --username kylecoding --password ${{secrets.ACCESS_TOKEN}} ghcr.io
+          docker build -t ghcr.io/kylecoding/primes-service:latest --file Dockerfile .  
           docker push ghcr.io/kylecoding/primes-service:latest
