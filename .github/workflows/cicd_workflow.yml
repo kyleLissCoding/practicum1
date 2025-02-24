@@ -5,11 +5,14 @@ on:
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write  # Grants permission to push to GHCR
+      contents: read  # Grants permission to read repo contents
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Updated to latest version
 
-      - name: Set up JDK 1.17
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
@@ -21,7 +24,7 @@ jobs:
       - name: Run the unit tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
 
-      - name: Report
+      - name: Report Test Results
         uses: dorny/test-reporter@v1
         if: always()
         with:
@@ -30,8 +33,11 @@ jobs:
           reporter: java-junit
           fail-on-error: true
 
-      - name: Build and push the image
+      - name: Log in to GitHub Container Registry
         run: |
-          docker login --username kyleLissCoding --password ${{secrets.ACCESS_TOKEN}} ghcr.io
-          docker build -t ghcr.io/kyleLissCoding/primes-service:latest --file Dockerfile .  
+          echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u kyleLissCoding --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ghcr.io/kyleLissCoding/primes-service:latest --file Dockerfile .
           docker push ghcr.io/kyleLissCoding/primes-service:latest
