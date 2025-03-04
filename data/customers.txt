@@ -1,0 +1,2 @@
+testuser,$2a$10$yk25bBffPGzIDccb.0/SrO4BkOFNr6iot8Hu5wZVwrgAU2T/yBpvG
+john,$2a$10$dT4V5Lptc7aca5YHbFAhUeWM/Mi6yoQRblVseJOptXJsGvysI0mcO
