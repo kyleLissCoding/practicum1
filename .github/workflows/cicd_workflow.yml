@@ -40,7 +40,7 @@ jobs:
 
       - name: Run the unit tests
         run: ./mvn --batch-mode -Dmaven.test.failure.ignore=true test
-        evn:
+        env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5001/primes
           SPRING_DATASOURCE_USERNAME: admin2024
           SPRING_DATASOURCE_PASSWORD: p4662024!
