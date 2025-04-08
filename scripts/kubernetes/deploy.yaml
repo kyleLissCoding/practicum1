@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prime-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prime-service
+  template:
+    metadata:
+      labels:
+        app: prime-service
+  spec:
+    containers:
+    - name: prime-service
+      image: $CONTAINER_REGISTRY/prime-service:$VERSION
+      imagePullPolicy: Always
+      envFrom:
+        - secretRef:
+            name: postgres-primes-secrets
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "200m"
+        limits:
+          memory: "512Mi"
+          cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prime-service
+spec:
+  selector:
+    app: prime-service
+  type: Load Balancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8085
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-primes-secrets
+stringData:
+  DATASOURCE_PASSWORD: $DATASOURCE_PW
+  DATASOURCE_USERNAME: $DATASOURCE_UN
+  DATASOURCE_URL: $DATASOURCE_URL

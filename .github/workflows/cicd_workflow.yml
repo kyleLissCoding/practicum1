@@ -5,6 +5,26 @@ on:
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
+    services:
+      postgres_db:
+        image: postgres
+        env:
+          POSTGRES_USER: admin2024
+          POSTGRES_PASSWORD: p4662024!
+          POSTGRES_DB: primes
+        ports:
+          - 5001:5432
+        #needed because the postgres container does not provide a healthcheck
+        options: -health-cmd pg_isready-health-interval 10s-health-timeout 5s--health-retries 5
+    env:
+      VERSION: ${{ secrets.SERVICE_VERSION }}
+      CONTAINER_REGISTRY: ${{ secrets. AZURE_CONTAINER_REGISTRY }}
+      CONTAINER_REGISTRY_UN: ${{ secrets.CONTAINER_REGISTRY_UN }}
+      CONTAINER_REGISTRY_PW: ${{ secrets.CONTAINER_REGISTRY_PW }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+      DATASOURCE_UN: ${{ secrets.SPRING_DATASOURCE_UN }}
+      DATASOURCE_PW: ${{ secrets.SPRING_DATASOURCE_PW }}
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -16,10 +36,14 @@ jobs:
           distribution: 'adopt'
 
       - name: Build the package
-        run: mvn --batch-mode -DskipTests package
+        run: ./mvn --batch-mode -DskipTests clean package
 
       - name: Run the unit tests
-        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        run: ./mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        evn:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5001/primes
+          SPRING_DATASOURCE_USERNAME: admin2024
+          SPRING_DATASOURCE_PASSWORD: p4662024!
 
       - name: Report
         uses: dorny/test-reporter@v1
@@ -30,11 +54,18 @@ jobs:
           reporter: java-junit
           fail-on-error: true
 
-      - name: Log in to GitHub Container Registry
-        run: |
-          echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u kyleLissCoding --password-stdin
+      - name: Build the docker image
+        run: ./scripts/build-image.sh
 
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t ghcr.io/kylelisscoding/primes-service:latest --file Dockerfile .
-          docker push ghcr.io/kylelisscoding/primes-service:latest
+      - name: Publish to Github container registry
+        run: ./scripts/push-to-ghcr.sh
+
+      - name: Publish to Azure Container Registry
+        run: ./scripts/push-to-acr.sh
+
+      - uses: tale/kubectl-action@v1
+        with:
+             base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Deploy
+        run: ./scripts/deploy.sh
