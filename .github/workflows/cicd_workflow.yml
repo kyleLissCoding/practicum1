@@ -36,10 +36,10 @@ jobs:
           distribution: 'adopt'
 
       - name: Build the package
-        run: ./.mvn --batch-mode -DskipTests clean package
+        run: mvn --batch-mode -DskipTests clean package
 
       - name: Run the unit tests
-        run: ./.mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5001/primes
           SPRING_DATASOURCE_USERNAME: admin2024
