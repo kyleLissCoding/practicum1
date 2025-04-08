@@ -11,21 +11,21 @@ spec:
     metadata:
       labels:
         app: prime-service
-  spec:
-    containers:
-    - name: prime-service
-      image: $CONTAINER_REGISTRY/prime-service:$VERSION
-      imagePullPolicy: Always
-      envFrom:
-        - secretRef:
-            name: postgres-primes-secrets
-      resources:
-        requests:
-          memory: "256Mi"
-          cpu: "200m"
-        limits:
-          memory: "512Mi"
-          cpu: "500m"
+    spec:
+      containers:
+      - name: prime-service
+        image: $CONTAINER_REGISTRY/prime-service:$VERSION
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: postgres-primes-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
 
 ---
 apiVersion: v1
