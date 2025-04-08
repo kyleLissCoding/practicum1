@@ -55,11 +55,16 @@ jobs:
           fail-on-error: true
 
       - name: Make script executable
-        run:
-          -   chmod +x ./scripts/build-image.sh
-          -   chmod +x ./scripts/push-to-ghcr.sh
-          -   chmod +x ./scripts/push-to-acr.sh
-          -   chmod +x ./scripts/deploy.sh
+        run: chmod +x ./scripts/build-image.sh
+
+      - name: Make script executable
+        run: chmod +x ./scripts/push-to-ghcr.sh
+
+      - name: Make script executable
+        run: chmod +x ./scripts/push-to-acr.sh
+
+      - name: Make script executable
+        run: chmod +x ./scripts/deploy.sh
 
 
       - name: Build the docker image
