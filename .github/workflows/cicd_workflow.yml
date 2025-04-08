@@ -54,6 +54,14 @@ jobs:
           reporter: java-junit
           fail-on-error: true
 
+      - name: Make script executable
+        run:
+          -   chmod +x ./scripts/build-image.sh
+          -   chmod +x ./scripts/push-to-ghcr.sh
+          -   chmod +x ./scripts/push-to-acr.sh
+          -   chmod +x ./scripts/deploy.sh
+
+
       - name: Build the docker image
         run: ./scripts/build-image.sh
 
