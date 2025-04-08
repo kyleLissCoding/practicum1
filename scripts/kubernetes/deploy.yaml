@@ -35,7 +35,7 @@ metadata:
 spec:
   selector:
     app: prime-service
-  type: Load Balancer
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 80
