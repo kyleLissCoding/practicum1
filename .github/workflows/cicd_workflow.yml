@@ -53,7 +53,7 @@ jobs:
           path: target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
-
+        # test
       - name: Make script executable
         run: chmod +x ./scripts/build-image.sh
 
